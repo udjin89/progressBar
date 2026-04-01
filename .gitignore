@@ -1,0 +1,78 @@
+
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# ============================
+# Android / Gradle
+# ============================
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+/bin/
+/gen/
+/out/
+/captures/
+derivatives/
+
+# Gradle
+.gradle/
+gradle-app.setting
+*.gradle
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+*.hprof
+
+# Local configuration
+local.properties
+secrets.properties
+*.jks
+*.keystore
+
+# Build outputs
+**/build/
+!**/src/main/build/
+
+# Native build
+obj/
+libs/armeabi/
+libs/armeabi-v7a/
+libs/arm64-v8a/
+libs/x86/
+libs/x86_64/
+
+# Logs
+*.log
+android-*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Firebase / Google Services
+google-services.json
+# ↑ Keep this file! But ignore if it contains secrets:
+# google-services.json  ← uncomment only if it has sensitive data
+
+# ============================
+# Optional: Kotlin/Native
+# ============================
+.kotlin
