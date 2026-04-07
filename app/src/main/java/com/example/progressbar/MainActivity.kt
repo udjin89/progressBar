@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.progressbar.ui.theme.ProgressBarTheme
+import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,8 +21,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProgressBarTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    HomeScreen(
+                        name ="ADHD progress bar",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
