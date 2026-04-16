@@ -11,10 +11,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.progressbar.dial.ProgressBar
+import com.example.progressbar.test.SwapableScreen
+import com.example.progressbar.viewmodel.TimerViewModel
 
 @Composable
-fun HomeScreen(name: String, modifier : Modifier){
+fun HomeScreen(name: String, modifier : Modifier, viewModel: TimerViewModel = viewModel()){
     Column {
         Text(
             text = " $name",
@@ -25,8 +28,12 @@ fun HomeScreen(name: String, modifier : Modifier){
                 .fillMaxWidth()
                 .background(Color.DarkGray)
         )
-        ProgressBar(modifier = Modifier.padding(16.dp), )
-        TimerScreen()
+        ProgressBar(
+            modifier = Modifier.padding(16.dp),
+            viewModel = viewModel
+        )
+        TimerScreen( viewModel = viewModel)
+        SwapableScreen()
     }
 }
 

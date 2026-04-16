@@ -52,7 +52,7 @@ object DataStoreManager {
         // Add more keys as needed...
     }
     // Default fallback (3 hours)
-    private const val DEFAULT_TIMER_DURATION = 3 * 60 * 60 * 1000L
+    private const val DEFAULT_TIMER_DURATION = 3 * 60 * 60 * 1000L //30 * 1000L
     // Internal reference (initialized via init())
     private lateinit var dataStore: DataStore<Preferences>
 
@@ -73,7 +73,12 @@ object DataStoreManager {
     suspend fun saveTimerState(elapsed: Long, anchor: Long?, isRunning: Boolean) {
         dataStore.edit { prefs ->
             prefs[Keys.TIMER_ELAPSED] = elapsed
-            anchor?.let { prefs[Keys.TIMER_ANCHOR] = it }
+            // Handle nullable anchor correctly:
+            if (anchor != null) {
+                prefs[Keys.TIMER_ANCHOR] = anchor  // Save timestamp
+            } else {
+                prefs.remove(Keys.TIMER_ANCHOR)    // Explicitly clear old value
+            }
             prefs[Keys.TIMER_RUNNING] = isRunning
         }
     }

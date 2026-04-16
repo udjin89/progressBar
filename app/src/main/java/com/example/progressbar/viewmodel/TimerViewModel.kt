@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.progressbar.datastore.DataStoreManager
+import com.example.progressbar.datastore.DataStoreManager.saveTimerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 data class TimerState(
     val progress: Float = 0f,
     val elapsedMillis: Long = 0L,
+    val totalDurationMillis: Long = 10_000L,
     val isRunning: Boolean = false,
     val isFinished: Boolean = false
 )
@@ -44,7 +46,7 @@ class TimerViewModel(): ViewModel() {
     private fun loadTimerConfig() = viewModelScope.launch {
         Log.d("DBG", "Load timer config!")
         totalTimeMillis = DataStoreManager.getTimerTotalDuration()
-
+        // _state.value = _state.value.copy(totalDurationMillis = totalTimeMillis)
     }
 
     fun onClickButton(){
@@ -54,21 +56,34 @@ class TimerViewModel(): ViewModel() {
 
     fun start() {
         if (_state.value.isRunning || _state.value.isFinished) return
-        // Anchor time survives pauses & backgrounding without drift
-        // When user taps "Start":
-        anchorTime = System.currentTimeMillis() - _state.value.elapsedMillis
+
+        val now = System.currentTimeMillis()
+        val currentElapsed = _state.value.elapsedMillis
+
+        anchorTime = now - currentElapsed
+        val calcStartProgress = calculateTimerState(anchorTime, totalTimeMillis)
+
+        _state.value = _state.value.copy(
+            elapsedMillis = 0L,
+            progress = 0f,
+            isRunning = true,
+            isFinished = false
+        )
+        Log.d("DBG", "State: ellapsed: ${state.value.elapsedMillis} + progress: ${state.value.progress}")
 
         timerJob = viewModelScope.launch {
-            _state.value = _state.value.copy(isRunning = true)
+
             while (currentCoroutineContext().isActive) {
                 delay(16L) //  smooth UI, minimal CPU overhead
-                val now = System.currentTimeMillis()
-                val elapsed = minOf(now - anchorTime, totalTimeMillis)
-                val progress = (elapsed.toFloat() / totalTimeMillis).coerceIn(0f, 1f)
 
-                _state.value = _state.value.copy(elapsedMillis = elapsed, progress = progress)
+                val calc = calculateTimerState(anchorTime, totalTimeMillis)
 
-                if (elapsed >= totalTimeMillis) {
+                // Update state (this triggers UI update!)
+                _state.value = _state.value.copy(
+                    elapsedMillis = calc.elapsed,
+                    progress = calc.progress)
+
+                if (calc.elapsed >= totalTimeMillis) {
                     _state.value = _state.value.copy(isRunning = false, isFinished = true)
                     break
                 }
@@ -79,12 +94,46 @@ class TimerViewModel(): ViewModel() {
 
     fun pause() {
         timerJob?.cancel()
-        _state.value = _state.value.copy(isRunning = false)
+        val currentState = _state.value
+        val calc = calculateTimerState(anchorTime, totalTimeMillis)
+
+        _state.value = _state.value.copy(
+            elapsedMillis = calc.elapsed,
+            progress = calc.progress,
+            isRunning = false
+        )
+
+        saveTimerState(calc)
+        anchorTime = 0L
+    }
+
+    private fun saveTimerState(calc: TimerCalculation) {
+        viewModelScope.launch {
+            saveTimerState(calc.elapsed, null, false)
+        }
     }
 
     fun reset() {
         timerJob?.cancel()
         _state.value = TimerState()
+    }
+
+    private data class TimerCalculation(
+        val elapsed: Long,
+        val progress: Float
+    )
+
+    private fun calculateTimerState(
+        anchorTime: Long,
+        totalTimeMillis: Long
+    ): TimerCalculation {
+        val now = System.currentTimeMillis() // Get real clock time
+        val elapsed = minOf(now - anchorTime, totalTimeMillis) // Calculate elapsed
+        // elapsed time is divided by total time => get progress between (0.0, 1.0)
+        // .coerceIn(0,1) - forces a value to stay within a range
+        val progress = (elapsed.toDouble() / totalTimeMillis).toFloat().coerceIn(0f, 1f)
+
+        return TimerCalculation(elapsed, progress)
     }
 
     //before VM is destroyed

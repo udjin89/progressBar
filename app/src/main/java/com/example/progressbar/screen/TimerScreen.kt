@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,11 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.progressbar.dial.TimerDial
+import com.example.progressbar.viewmodel.TimerViewModel
 import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.delay
 
 @Composable
-fun TimerScreen() {
+fun TimerScreen(viewModel: TimerViewModel) {
     val totalDuration = 60_000L // 60 seconds
     var remaining by remember { mutableLongStateOf(totalDuration) }
     var isRunning by remember { mutableStateOf(false) } //initial state
@@ -38,7 +40,7 @@ fun TimerScreen() {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.wrapContentHeight(Alignment.CenterVertically).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -49,7 +51,10 @@ fun TimerScreen() {
         )
         Spacer(Modifier.height(24.dp))
         Button(
-            onClick = { isRunning = !isRunning },
+            onClick = {
+                isRunning = !isRunning
+                viewModel.onClickButton()
+            },
             modifier = Modifier.fillMaxWidth(0.5f)
         ) {
             Text(if (isRunning) "Pause" else "Resume")
