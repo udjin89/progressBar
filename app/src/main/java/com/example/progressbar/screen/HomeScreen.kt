@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.progressbar.dial.ProgressBar
+import com.example.progressbar.settings.SettingsTimers
 import com.example.progressbar.test.SwapableScreen
 import com.example.progressbar.viewmodel.TimerViewModel
 
@@ -28,11 +29,13 @@ fun HomeScreen(name: String, modifier : Modifier, viewModel: TimerViewModel = vi
                 .fillMaxWidth()
                 .background(Color.DarkGray)
         )
+
         ProgressBar(
             modifier = Modifier.padding(16.dp),
-            viewModel = viewModel
+            viewModel = viewModel,
         )
-        TimerScreen( viewModel = viewModel)
+        TimerScreen(viewModel = viewModel)
+        SettingsTimers(viewModel = viewModel)
         SwapableScreen()
     }
 }

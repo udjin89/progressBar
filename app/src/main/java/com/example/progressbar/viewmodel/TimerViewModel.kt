@@ -30,12 +30,13 @@ class TimerViewModel(): ViewModel() {
     private var anchorTime: Long = 0L
 
     // Config (loaded from DataStore)
-    private var totalTimeMillis: Long = 10000L
+    private var totalDuration: Long = 10000L
     // Restoration flag (prevent double-restore)
     private var isRestored = false
 
     init {
         //Load config + state on ViewModel creation
+        Log.w("DBG", "init TimerViewModel")
         loadTimerConfig()
     }
 
@@ -44,9 +45,9 @@ class TimerViewModel(): ViewModel() {
     // ─────────────────────────────────────────────────────
 
     private fun loadTimerConfig() = viewModelScope.launch {
-        Log.d("DBG", "Load timer config!")
-        totalTimeMillis = DataStoreManager.getTimerTotalDuration()
-       // _state.value = _state.value.copy(totalDurationMillis = totalTimeMillis)
+        totalDuration = DataStoreManager.getTimerTotalDuration()
+        Log.d("DBG", "Load timer config! totalDuration ${totalDuration}")
+        _state.value = _state.value.copy(totalDurationMillis = totalDuration)
     }
 
     fun onClickButton(){
@@ -54,14 +55,14 @@ class TimerViewModel(): ViewModel() {
         else start()
     }
 
-    fun start() {
+    private fun start() {
         if (_state.value.isRunning || _state.value.isFinished) return
 
         val now = System.currentTimeMillis()
         val currentElapsed = _state.value.elapsedMillis
 
         anchorTime = now - currentElapsed
-        val calcStartProgress = calculateTimerState(anchorTime, totalTimeMillis)
+        val calcStartProgress = calculateTimerState(anchorTime, totalDuration)
 
         _state.value = _state.value.copy(
             elapsedMillis = 0L,
@@ -74,14 +75,14 @@ class TimerViewModel(): ViewModel() {
             while (currentCoroutineContext().isActive) {
                 delay(16L) //  smooth UI, minimal CPU overhead
 
-                val calc = calculateTimerState(anchorTime, totalTimeMillis)
+                val calc = calculateTimerState(anchorTime, totalDuration)
 
                 // Update state (this triggers UI update!)
                 _state.value = _state.value.copy(
                     elapsedMillis = calc.elapsed,
                     progress = calc.progress)
 
-                if (calc.elapsed >= totalTimeMillis) {
+                if (calc.elapsed >= totalDuration) {
                     _state.value = _state.value.copy(isRunning = false, isFinished = true)
                     break
                 }
@@ -89,11 +90,11 @@ class TimerViewModel(): ViewModel() {
         }
     }
 
-    fun pause() {
+    private fun pause() {
         timerJob?.cancel()
 
         val currentState = _state.value
-        val calc = calculateTimerState(anchorTime, totalTimeMillis)
+        val calc = calculateTimerState(anchorTime, totalDuration)
 
         _state.value = _state.value.copy(
             elapsedMillis = calc.elapsed,
@@ -138,5 +139,9 @@ class TimerViewModel(): ViewModel() {
         val progress = (elapsed.toDouble() / totalTimeMillis).toFloat().coerceIn(0f, 1f)
 
         return TimerCalculation(elapsed, progress)
+    }
+
+    fun getTotalDuration() : Long {
+        return totalDuration
     }
 }

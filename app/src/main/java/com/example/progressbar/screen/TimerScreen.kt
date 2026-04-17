@@ -11,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,9 +27,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun TimerScreen(viewModel: TimerViewModel) {
-    val totalDuration = 60_000L // 60 seconds
-    var remaining by remember { mutableLongStateOf(totalDuration) }
+
+    val state by viewModel.state.collectAsState()
+
+    var remaining by remember { mutableLongStateOf(0L) }
     var isRunning by remember { mutableStateOf(false) } //initial state
+
+    // Sync remaining whenever totalDuration changes
+    LaunchedEffect(state.totalDurationMillis) {
+        remaining = state.totalDurationMillis
+    }
 
     LaunchedEffect(isRunning) {
         if (!isRunning) return@LaunchedEffect
@@ -44,9 +52,9 @@ fun TimerScreen(viewModel: TimerViewModel) {
         verticalArrangement = Arrangement.Center
     ) {
         TimerDial(
-            totalDurationMillis = totalDuration,
+            totalDurationMillis = state.totalDurationMillis,
             remainingMillis = remaining,
-            modifier = Modifier.size(220.dp)
+            modifier = Modifier
         )
         Spacer(Modifier.height(24.dp))
         Button(

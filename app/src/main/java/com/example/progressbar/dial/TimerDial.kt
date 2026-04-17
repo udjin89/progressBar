@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.progressbar.utils.formatDuration
 
 @Composable
 fun TimerDial(
@@ -47,11 +48,12 @@ fun TimerDial(
     val sweepAngle = animatedProgress * 360f
     val minutes = safeRemaining / 1000 / 60
     val seconds = (safeRemaining / 1000) % 60
-    val timeText = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+//    val timeText = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+    val timeText = formatDuration(safeRemaining/1000L)
 
     Box(
         modifier = modifier
-            .size(200.dp)
+            .size(160.dp)
             .semantics { contentDescription = "Timer showing $timeText" },
         contentAlignment = Alignment.Center
     ) {
