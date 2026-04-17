@@ -2,16 +2,15 @@ package com.example.progressbar.dial
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,13 +22,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.progressbar.ui.theme.BrightYellow40
-import com.example.progressbar.ui.theme.Green40
 import com.example.progressbar.ui.theme.Orange40
 import com.example.progressbar.ui.theme.Pink80
 import com.example.progressbar.ui.theme.Purple40
-import com.example.progressbar.ui.theme.YellowGrey40
+import com.example.progressbar.utils.formatDuration
 import com.example.progressbar.viewmodel.TimerViewModel
 
 
@@ -48,13 +45,14 @@ fun ProgressBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, YellowGrey40)
+            .wrapContentHeight(Alignment.CenterVertically)
+            //.border(1.dp, YellowGrey40)
             .onSizeChanged { parentWidthPx = it.width }
     ) {
         //val markerPosition = 0.5f
-        Log.e("DBG", "totalDuration: ${state.totalDurationMillis}")
+        //Log.e("DBG", "totalDuration: ${state.totalDurationMillis}")
         val markerPosition = ( (3.0 * 60 * 60_000L) / state.totalDurationMillis ).toFloat().coerceIn(0f, 1f)
-        Log.e("DBG", "MarkerPosition: $markerPosition")
+        Log.e("DBG", "Elapsed: ${formatDuration(state.elapsedMillis)}")
 
         // 🟢 VERTICAL LINE (BEHIND)
         markerPosition?.let { position ->
@@ -82,7 +80,7 @@ fun ProgressBar(
                 .fillMaxWidth()
                 .align(Alignment.Center)
                 .height(heightOfBar)
-                .border(1.dp, Green40)
+                //.border(1.dp, Green40)
                 .background(BrightYellow40),
             color = Purple40, // main track, time is passed
             trackColor = Pink80, // time which remains

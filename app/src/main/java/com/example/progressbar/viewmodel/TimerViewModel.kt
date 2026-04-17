@@ -62,11 +62,12 @@ class TimerViewModel(): ViewModel() {
         val currentElapsed = _state.value.elapsedMillis
 
         anchorTime = now - currentElapsed
-        val calcStartProgress = calculateTimerState(anchorTime, totalDuration)
+
+        val shouldReset = currentElapsed == 0L
 
         _state.value = _state.value.copy(
-            elapsedMillis = 0L,
-            progress = 0f,
+            elapsedMillis = if(shouldReset) 0L else currentElapsed,
+            progress = if(shouldReset) 0f else getProgress(currentElapsed, totalDuration),
             isRunning = true,
             isFinished = false
         )
@@ -136,12 +137,16 @@ class TimerViewModel(): ViewModel() {
         val elapsed = minOf(now - anchorTime, totalTimeMillis) // Calculate elapsed
         // elapsed time is divided by total time => get progress between (0.0, 1.0)
         // .coerceIn(0,1) - forces a value to stay within a range
-        val progress = (elapsed.toDouble() / totalTimeMillis).toFloat().coerceIn(0f, 1f)
+        val progress = getProgress(elapsed, totalTimeMillis)
 
         return TimerCalculation(elapsed, progress)
     }
 
     fun getTotalDuration() : Long {
         return totalDuration
+    }
+
+    private fun getProgress(elapsed : Long, total: Long): Float {
+        return (elapsed.toDouble() / total).toFloat().coerceIn(0f, 1f)
     }
 }

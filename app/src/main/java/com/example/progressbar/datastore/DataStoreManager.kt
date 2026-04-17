@@ -3,7 +3,6 @@ package com.example.progressbar.datastore
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -53,7 +52,7 @@ object DataStoreManager {
         // Add more keys as needed...
     }
     // Default fallback (3 hours)
-    private const val DEFAULT_TIMER_DURATION = 5 * 60 * 60 * 1000L//3 * 60 * 60 * 1000L //30 * 1000L
+    private const val DEFAULT_TIMER_DURATION = 30 * 1000L //5 * 60 * 60 * 1000L//3 * 60 * 60 * 1000L //
     // Internal reference (initialized via init())
     private lateinit var dataStore: DataStore<Preferences>
 
