@@ -1,6 +1,11 @@
 package com.example.progressbar.settings
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
@@ -8,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -26,15 +31,16 @@ fun SettingsTimers(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .wrapContentHeight(Alignment.CenterVertically).fillMaxWidth()
             .padding(16.dp)
     ) {
         // 🔹 1️⃣ Total Time Box
         TimeCard(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp).clickable{
+                onTotalTimeClick()
+            },
             title = "Total Duration",
-            timeSeconds = (state.totalDurationMillis) / 1000L,
-            onClick = onTotalTimeClick,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+            timeMillis = (state.totalDurationMillis),
         )
 
         // 🔹 2️⃣ Thresholds Header
@@ -52,10 +58,9 @@ fun SettingsTimers(
             val thresholds = listOf(60L, 150L, 240L)
             itemsIndexed(thresholds) { index, threshold ->
                 TimeCard(
+                    modifier = Modifier.fillMaxWidth().clickable{ onThresholdClick(threshold) },
                     title = "Threshold ${index + 1}",
-                    timeSeconds = threshold,
-                    onClick = { onThresholdClick(threshold) },
-                    modifier = Modifier.fillMaxWidth()
+                    timeMillis = threshold,
                 )
             }
         }

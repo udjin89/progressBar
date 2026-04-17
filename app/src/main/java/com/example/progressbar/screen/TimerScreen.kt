@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -22,8 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.progressbar.dial.TimerDial
 import com.example.progressbar.viewmodel.TimerViewModel
-import kotlinx.coroutines.NonCancellable.isActive
-import kotlinx.coroutines.delay
 
 @Composable
 fun TimerScreen(viewModel: TimerViewModel) {
@@ -38,22 +35,15 @@ fun TimerScreen(viewModel: TimerViewModel) {
         remaining = state.totalDurationMillis
     }
 
-    LaunchedEffect(isRunning) {
-        if (!isRunning) return@LaunchedEffect
-        while (remaining > 0 && isActive) {
-            delay(1000L)
-            remaining -= 1000L
-        }
-    }
-
     Column(
         modifier = Modifier.wrapContentHeight(Alignment.CenterVertically).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         TimerDial(
+            //viewModel = viewModel,
             totalDurationMillis = state.totalDurationMillis,
-            remainingMillis = remaining,
+            remainingMillis = state.elapsedMillis,
             modifier = Modifier
         )
         Spacer(Modifier.height(24.dp))
@@ -64,7 +54,13 @@ fun TimerScreen(viewModel: TimerViewModel) {
                       },
             modifier = Modifier.fillMaxWidth(0.5f)
         ) {
-            Text(if (isRunning) "Pause" else "Resume")
+            Text(
+                text = when {
+                    state.isFinished -> "Reset"      // ✅ Highest priority
+                    state.isRunning -> "Pause"        // ✅ Second
+                    else -> "Start"                   // ✅ Default
+                }
+            )
         }
     }
 }

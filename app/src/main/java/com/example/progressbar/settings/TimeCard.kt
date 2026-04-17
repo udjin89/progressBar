@@ -13,23 +13,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.util.TimeUtils.formatDuration
+import com.example.progressbar.ui.theme.Forest40
+import com.example.progressbar.ui.theme.GreenGrey80
+import com.example.progressbar.ui.theme.GreenGrey90
+import com.example.progressbar.ui.theme.GreenLight80
 import com.example.progressbar.utils.formatDuration
 
 @Composable
 fun TimeCard(
     title: String,
-    timeSeconds: Long,
-    onClick: () -> Unit,
+    timeMillis: Long,
     modifier: Modifier = Modifier
 ) {
         Box(
             modifier = modifier
-                .background(Color(0xFFECFDF5), RoundedCornerShape(12.dp))  // GreenLight80
-                .border(1.dp, Color(0xFFC1C7C0), RoundedCornerShape(12.dp)) // GreenGrey80
+                .background(GreenLight80, RoundedCornerShape(12.dp))  // GreenLight80
+                .border(1.dp, GreenGrey80, RoundedCornerShape(12.dp)) // GreenGrey80
                 .padding(horizontal = 16.dp, vertical = 14.dp)
         ) {
             Row(
@@ -40,12 +41,12 @@ fun TimeCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF3A4A42)
+                    color = GreenGrey90
                 )
                 Text(
-                    text = formatDuration(timeSeconds),
+                    text = formatDuration(timeMillis),
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF059669), // Forest40
+                    color = Forest40, // Forest40
                     fontWeight = FontWeight.SemiBold
                 )
             }
