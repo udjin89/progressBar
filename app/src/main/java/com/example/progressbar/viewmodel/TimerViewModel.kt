@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.progressbar.datastore.DataStoreManager
+import com.example.progressbar.datastore.DataStoreManager.loadTimerState
 import com.example.progressbar.datastore.DataStoreManager.saveTimerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
@@ -35,24 +36,67 @@ class TimerViewModel(): ViewModel() {
     private var isRestored = false
 
     init {
-        //Load config + state on ViewModel creation
         Log.w("DBG", "init TimerViewModel")
-        loadTimerConfig()
+        viewModelScope.launch { restoreTimer() }
     }
 
     // ─────────────────────────────────────────────────────
     //  LOAD: Restore timer from DataStore
     // ─────────────────────────────────────────────────────
-
-    private fun loadTimerConfig() = viewModelScope.launch {
+    private suspend fun restoreTimer(){
         totalDuration = DataStoreManager.getTimerTotalDuration()
-        Log.d("DBG", "Load timer config! totalDuration ${totalDuration}")
-        _state.value = _state.value.copy(totalDurationMillis = totalDuration)
+
+        val (savedElapsed, savedAnchor, wasRunning) = loadTimerState()
+
+        Log.i("DBG", "Restore Timer: \n" +
+                "\tTotal: $totalDuration\n" +
+                "\tElapsed: $savedElapsed\n" +
+                "\tAnchor: $savedAnchor\n" +
+                "\tisRunning: $wasRunning")
+        //
+        if (!wasRunning || savedAnchor == null) {
+            _state.value = _state.value.copy(
+                totalDurationMillis = totalDuration,
+                progress = getProgress(savedElapsed, totalDuration),
+                elapsedMillis = savedElapsed.coerceAtLeast(0L),
+                isRunning = false,
+                isFinished = savedElapsed >= totalDuration)
+            return
+        }
+
+        // If was running → calculate true elapsed via wall-clock
+        val now = System.currentTimeMillis()
+        val trueElapsed = (now - savedAnchor).coerceAtLeast(0L)
+        val cappedElapsed = minOf(trueElapsed, totalDuration)
+
+        // ✅ Progress recalculated from source data
+        val progress = getProgress(cappedElapsed, totalDuration)
+
+        _state.value = TimerState(
+            elapsedMillis = cappedElapsed,
+            progress = progress,  // ✅ Always derived, never persisted
+            totalDurationMillis = totalDuration,
+            isFinished = cappedElapsed >= totalDuration,
+            isRunning = cappedElapsed < totalDuration
+        )
+
+        if (cappedElapsed < totalDuration) {
+            anchorTime = now - cappedElapsed
+            startTimerCoroutine()
+        } else {
+            saveTimerState(elapsed = cappedElapsed, anchor = null, isRunning = false)
+        }
     }
+//    private fun loadTimerConfig() = viewModelScope.launch {
+//        totalDuration = DataStoreManager.getTimerTotalDuration()
+//        Log.d("DBG", "Load timer config! totalDuration ${totalDuration}")
+//        _state.value = _state.value.copy(totalDurationMillis = totalDuration)
+//    }
 
     fun onClickButton(){
-        if(_state.value.isRunning) pause()
-        else start()
+        if(_state.value.isFinished) reset()
+         else if(_state.value.isRunning) pause()
+                else start()
     }
 
     private fun start() {
@@ -72,6 +116,20 @@ class TimerViewModel(): ViewModel() {
             isFinished = false
         )
         Log.d("DBG", "State: ellapsed: ${state.value.elapsedMillis} + progress: ${state.value.progress}")
+
+        viewModelScope.launch {
+            saveTimerState(
+                elapsed = currentElapsed,
+                anchor = anchorTime,
+                isRunning = true
+            )
+        }
+
+        startTimerCoroutine()
+    }
+
+    private fun startTimerCoroutine(){
+        timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (currentCoroutineContext().isActive) {
                 delay(16L) //  smooth UI, minimal CPU overhead
@@ -90,11 +148,9 @@ class TimerViewModel(): ViewModel() {
             }
         }
     }
-
     private fun pause() {
         timerJob?.cancel()
 
-        val currentState = _state.value
         val calc = calculateTimerState(anchorTime, totalDuration)
 
         _state.value = _state.value.copy(
@@ -112,10 +168,18 @@ class TimerViewModel(): ViewModel() {
             saveTimerState(calc.elapsed, null, false)
         }
     }
+    private fun saveTimerState(elapsed : Long){
+        viewModelScope.launch {
+            saveTimerState(elapsed, null, false)
+        }
+    }
 
     fun reset() {
         timerJob?.cancel()
-        _state.value = TimerState()
+        saveTimerState(0L)
+        _state.value = TimerState(
+            totalDurationMillis = totalDuration
+        )
     }
 
     //before VM is destroyed

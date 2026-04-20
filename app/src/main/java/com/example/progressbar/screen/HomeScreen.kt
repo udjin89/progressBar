@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.progressbar.dial.ProgressBar
-import com.example.progressbar.dialogs.WarningDialog
+import com.example.progressbar.dialogs.DialogBase
+import com.example.progressbar.dialogs.timepicker.WheelTimePicker
 import com.example.progressbar.settings.SettingsTimers
 import com.example.progressbar.test.SwapableScreen
 import com.example.progressbar.ui.theme.Forest40
@@ -60,16 +61,19 @@ fun HomeScreen(name: String, modifier : Modifier, viewModel: TimerViewModel = vi
             SettingsTimers(
                 viewModel = viewModel,
                 onTotalTimeClick = { showTotalDurationDialog.value = true })
+
             if (showTotalDurationDialog.value) {
                 Log.i("DBG", "we need show dialog")
-                WarningDialog(
+                DialogBase(
                     show = showTotalDurationDialog,
-                    title = "Fucking Alert !!!",
-                    description = "Test for my dialog",
-                    onConfirm = {
-                        // ✅ Optional: Run code when user taps OK
-//                        viewModel.reset()
-                        // Dialog auto-closes via show.value = false inside WarningDialog
+                    onDismiss = {},
+                    content = {
+                        WheelTimePicker(
+                            //initialHours = TODO(),
+                            //initialMinutes = TODO(),
+                            //initialSeconds = TODO(),
+                            onTimeChange = { o,t,th ->  }
+                        )
                     }
                 )
             }

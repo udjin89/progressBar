@@ -46,7 +46,7 @@ fun TimerDial(
     // ✅ FIX: Removed explicit `State<Float>` type. `by` auto-unwraps to `Float`.
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
-        animationSpec = tween(durationMillis = 900, easing = LinearEasing),
+        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
         label = "TimerDialProgress"
     )
 

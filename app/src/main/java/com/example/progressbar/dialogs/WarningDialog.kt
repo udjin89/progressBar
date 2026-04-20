@@ -31,10 +31,21 @@ fun WarningDialog(
             }
         },
 
-        dismissButton = {
-            TextButton(onClick = { show.value = false }) { // ✅ Auto-closes
-                Text("Cancel")
-            }
-        }
+//        dismissButton = {
+//            TextButton(onClick = { show.value = false }) { // ✅ Auto-closes
+//                Text("Cancel")
+//            }
+//        }
     )
 }
+// --- using --
+//WarningDialog(
+//show = showTotalDurationDialog,
+//title = "Fucking Alert !!!",
+//description = "Test for my dialog",
+//onConfirm = {
+//    // ✅ Optional: Run code when user taps OK
+////                        viewModel.reset()
+//    // Dialog auto-closes via show.value = false inside WarningDialog
+//}
+//)

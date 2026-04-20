@@ -40,7 +40,6 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
  * Thread-safe, coroutine-based, and type-safe.
  */
 object DataStoreManager {
-
     // Type-safe preference keys (define all your keys here)
    object Keys {
         val TIMER_ELAPSED = longPreferencesKey("timer_elapsed")
@@ -160,4 +159,15 @@ object DataStoreManager {
     suspend fun <T> getValue(key: Preferences.Key<T>, defaultValue: T): T = dataStore.data
         .map { prefs -> prefs[key] ?: defaultValue }
         .first()
+
+    suspend fun loadTimerState(): Triple<Long, Long?, Boolean> {
+        val prefs = dataStore.data.first() // Suspend until first value is available
+
+        val elapsed = prefs[Keys.TIMER_ELAPSED] ?: 0L
+        val anchor = prefs[Keys.TIMER_ANCHOR] // Nullable: null if removed
+        val isRunning = prefs[Keys.TIMER_RUNNING] ?: false
+
+        return Triple(elapsed, anchor, isRunning)
+    }
 }
+
