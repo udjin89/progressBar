@@ -23,7 +23,7 @@ fun DialogBase(
         },
         properties = DialogProperties(
             dismissOnBackPress = true,
-            dismissOnClickOutside = true,
+            dismissOnClickOutside = false,
             usePlatformDefaultWidth = false // 🔑 Critical: lets your content control size
         )
     ) {

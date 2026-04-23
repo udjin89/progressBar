@@ -12,28 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.example.progressbar.dial.TimerDial
 import com.example.progressbar.viewmodel.TimerViewModel
 
 @Composable
 fun TimerScreen(viewModel: TimerViewModel) {
-
+    val haptic = LocalHapticFeedback.current
     val state by viewModel.state.collectAsState()
 
-    var remaining by remember { mutableLongStateOf(0L) }
     var isRunning by remember { mutableStateOf(false) } //initial state
+    val duration by viewModel.totalDuration.collectAsState()
 
-    // Sync remaining whenever totalDuration changes
-    LaunchedEffect(state.totalDurationMillis) {
-        remaining = state.totalDurationMillis
-    }
 
     Column(
         modifier = Modifier.wrapContentHeight(Alignment.CenterVertically).fillMaxWidth(),
@@ -42,9 +39,9 @@ fun TimerScreen(viewModel: TimerViewModel) {
     ) {
         TimerDial(
             //viewModel = viewModel,
-            totalDurationMillis = state.totalDurationMillis,
-            remainingMillis = state.elapsedMillis,
-            modifier = Modifier
+            totalDurationMillis = duration,
+            elapsedMillis = state.elapsedMillis,
+           // modifier = Modifier.border(1.dp, Yellow40)
         )
         Spacer(Modifier.height(24.dp))
         Button(
@@ -62,5 +59,9 @@ fun TimerScreen(viewModel: TimerViewModel) {
                 }
             )
         }
+    }
+
+    LaunchedEffect(isRunning) {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 }

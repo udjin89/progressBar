@@ -8,16 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 
 @Composable
-fun WarningDialog(
+fun WarningDialogWithCancel(
     show: MutableState<Boolean>,
     title: String,
     description: String,
-    onConfirm: (() -> Unit)? = null
+    onConfirm: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null
 ) {
     if (!show.value) return
 
     AlertDialog(
-        // All 3 dismissal paths auto-set show.value = false
         onDismissRequest = { show.value = false },
         title = { Text(title, style = MaterialTheme.typography.headlineSmall) },
         text = { Text(description, style = MaterialTheme.typography.bodyMedium) },
@@ -31,10 +31,13 @@ fun WarningDialog(
             }
         },
 
-//        dismissButton = {
-//            TextButton(onClick = { show.value = false }) { // ✅ Auto-closes
-//                Text("Cancel")
-//            }
-//        }
+        dismissButton = {
+            TextButton(onClick = {
+                show.value = false
+                onDismiss?.invoke()
+            }) {
+                Text("Cancel")
+            }
+        }
     )
 }

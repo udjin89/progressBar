@@ -46,12 +46,13 @@ object DataStoreManager {
         val TIMER_ANCHOR = longPreferencesKey("timer_anchor") // when timer was started
         val TIMER_RUNNING = booleanPreferencesKey("timer_running")
         val TIMER_TOTAL_DURATION = longPreferencesKey("timer_total_duration")
+        val TIMER_THRESHOLDS = stringPreferencesKey("timer_thresholds")
         val USER_NAME = stringPreferencesKey("user_name")
         val IS_DARK_MODE = booleanPreferencesKey("is_dark_mode")
         // Add more keys as needed...
     }
     // Default fallback (3 hours)
-    private const val DEFAULT_TIMER_DURATION = 30 * 1000L //5 * 60 * 60 * 1000L//3 * 60 * 60 * 1000L //
+    private const val DEFAULT_TIMER_DURATION = 30 * 1000L //5 * 60 * 60 * 1000L//3 * 60 * 60 * 1000L//
     // Internal reference (initialized via init())
     private lateinit var dataStore: DataStore<Preferences>
 
@@ -116,6 +117,11 @@ object DataStoreManager {
         dataStore.edit { it.clear() }
     }
 
+    suspend fun saveTimerThresholds(thresholds: List<Long>) {
+        dataStore.edit { prefs ->
+            prefs[Keys.TIMER_THRESHOLDS] = thresholds.joinToString(",")
+        }
+    }
     // ─────────────────────────────────────────────────────
     //  READ OPERATIONS (Flow for reactive UI)
     // ─────────────────────────────────────────────────────
@@ -143,6 +149,16 @@ object DataStoreManager {
         .catch { emit(emptyPreferences()) }
         .map { prefs -> prefs[key] ?: defaultValue }
 
+    fun observeTimerThresholds(): Flow<List<Long>> = dataStore.data
+        .catch { emit(emptyPreferences()) }
+        .map { prefs ->
+            prefs[Keys.TIMER_THRESHOLDS]
+                ?.split(",")
+                ?.mapNotNull { it.trim().toLongOrNull() }
+                ?.takeIf { it.isNotEmpty() }
+                ?: listOf(100L, 1000L)  // ✅ Default fallback
+        }
+
     // ─────────────────────────────────────────────────────
     //  ONE-TIME READ (for non-reactive use cases)
     // ─────────────────────────────────────────────────────
@@ -169,5 +185,15 @@ object DataStoreManager {
 
         return Triple(elapsed, anchor, isRunning)
     }
+
+    suspend fun getTimerThresholds(): List<Long> = dataStore.data
+        .map { prefs ->
+            prefs[Keys.TIMER_THRESHOLDS]
+                ?.split(",")
+                ?.mapNotNull { it.trim().toLongOrNull() }
+                ?.takeIf { it.isNotEmpty() }
+                ?: listOf(60L, 150L, 240L)
+        }
+        .first()
 }
 

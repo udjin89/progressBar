@@ -1,6 +1,5 @@
 package com.example.progressbar.dial
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -28,20 +27,20 @@ import com.example.progressbar.utils.formatDuration
 fun TimerDial(
     //viewModel: TimerViewModel,
     totalDurationMillis: Long,
-    remainingMillis: Long,
+    elapsedMillis: Long,
     modifier: Modifier = Modifier,
     trackColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     progressColor: Color = MaterialTheme.colorScheme.primary,
     textStyle: TextStyle = MaterialTheme.typography.headlineMedium
 ) {
-
+    //Log.i("DBG", "elapsedMillis --> ${elapsedMillis}")
     // Clamp to prevent negative progress
-    val safeRemaining = maxOf(totalDurationMillis - remainingMillis, 0L)
+    val safeRemaining = maxOf(totalDurationMillis - elapsedMillis, 0L)
     val progress = if (totalDurationMillis > 0) {
         safeRemaining.toFloat() / totalDurationMillis
     } else 0f
 
-    Log.i("DBG", "--> ${safeRemaining}, total = $totalDurationMillis")
+    //Log.i("DBG", "--> ${safeRemaining}, total = $totalDurationMillis")
 
     // ✅ FIX: Removed explicit `State<Float>` type. `by` auto-unwraps to `Float`.
     val animatedProgress by animateFloatAsState(
@@ -53,7 +52,7 @@ fun TimerDial(
     val sweepAngle = animatedProgress * 360f
 //    val timeText = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
     val timeText = formatDuration(safeRemaining)
-    Log.i("DBG", "--> ${timeText}")
+    //Log.i("DBG", "--> ${timeText}")
     Box(
         modifier = modifier
             .size(160.dp)
