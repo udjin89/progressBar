@@ -60,7 +60,6 @@ fun HomeScreen(name: String, modifier : Modifier, viewModel: TimerViewModel = vi
             color =  Forest40,
             modifier = modifier
                 .fillMaxWidth()
-                //.border(1.dp, Forest40)
                 .background(GreenLight80)
                 .padding(0.dp, 5.dp)
         )
@@ -105,7 +104,6 @@ fun HomeScreen(name: String, modifier : Modifier, viewModel: TimerViewModel = vi
                                     Log.i("DBG", "✅ Dismissing dialog. totalMillis = $totalMillis")
                                     showRestartConfirmation.value = true
                                 }
-                                //showTotalDurationDialog.value = false  // ✅ This line dismisses!
                             }
                         )
                     }
@@ -122,7 +120,6 @@ fun HomeScreen(name: String, modifier : Modifier, viewModel: TimerViewModel = vi
                                 viewModel.saveTotalDuration(pendingTotalDuration)
                                 // Optional: reset timer if running
                                 viewModel.resetInitialState()
-
                             }
                             showRestartConfirmation.value = false
                             showTotalDurationDialog.value = false  // Ensure both closed
@@ -133,7 +130,6 @@ fun HomeScreen(name: String, modifier : Modifier, viewModel: TimerViewModel = vi
                     dismissButton = {
                         TextButton(onClick = {
                             showRestartConfirmation.value = false
-                            // Keep time picker open for re-edit
                         }) {
                             Text("Cancel")
                         }

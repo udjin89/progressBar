@@ -24,17 +24,11 @@ fun WarningDialog(
 
         confirmButton = {
             TextButton(onClick = {
-                show.value = false // ✅ Auto-closes
-                onConfirm?.invoke() // 🟢 Optional extra action
+                show.value = false //  Auto-closes
+                onConfirm?.invoke() // Optional extra action
             }) {
                 Text("OK")
             }
-        },
-
-//        dismissButton = {
-//            TextButton(onClick = { show.value = false }) { // ✅ Auto-closes
-//                Text("Cancel")
-//            }
-//        }
+        }
     )
 }

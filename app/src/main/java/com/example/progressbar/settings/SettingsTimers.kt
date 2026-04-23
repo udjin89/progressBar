@@ -35,13 +35,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsTimers(
-    //settings: AppSettings,
     viewModel: TimerViewModel,
     onThresholdClick: (Long) -> Unit = {},     // Future: edit threshold
     onTotalTimeClick: () -> Unit = {}          // Future: edit total time
 ) {
 
-    val state by viewModel.state.collectAsState()
     val duration by viewModel.totalDuration.collectAsState()
     val thresholds by viewModel.thresholds.collectAsState()
 
@@ -91,7 +89,6 @@ fun SettingsTimers(
                    }
 
                },
-               //modifier = Modifier.padding(top = 16.dp)
            ) {
                Text("+ Add")
            }
@@ -100,12 +97,11 @@ fun SettingsTimers(
 
         // 🔹 3️⃣ Thresholds List
         LazyColumn(
-            //modifier = Modifier.navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(
                 start = 0.dp,
                 end = 0.dp,
-                bottom = 40.dp  // ✅ No extra padding beyond what innerPadding provides
+                bottom = 40.dp  // No extra padding beyond what innerPadding provides
             )
         ) {
             itemsIndexed(thresholds) { index, threshold ->
@@ -143,9 +139,9 @@ fun SettingsTimers(
                     showDialog.value = false
                     editingThreshold = null  // ✅ Reset on cancel/back
                 }
-            ) {
+            ){
                 WheelTimePicker(
-                    // ✅ Convert current value to h/m/s for picker
+                    // Convert current value to h/m/s for picker
                     initialHours = currentValue.toHours(),
                     initialMinutes = currentValue.toMinutes(),
                     initialSeconds = currentValue.toSeconds(),
@@ -173,13 +169,7 @@ fun SettingsTimers(
                         // Close dialog
                         showDialog.value = false
                         editingThreshold = null  // ✅ Reset after save
-                    },
-
-                    // ✅ User tapped Cancel or back button
-//                    onDismiss = {
-//                        showDialog.value = false
-//                        editingThreshold = null  // ✅ Reset on cancel
-//                    }
+                    }
                 )
             }
         }
