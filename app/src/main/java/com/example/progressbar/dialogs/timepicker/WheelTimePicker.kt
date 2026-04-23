@@ -64,28 +64,17 @@ fun WheelTimePicker(
     var minutes by remember { mutableIntStateOf(initialMinutes) }
     var seconds by remember { mutableIntStateOf(initialSeconds) }
 
-    Surface (shape = RoundedCornerShape(16.dp),
+    Surface (
+        shape = RoundedCornerShape(16.dp),
         color = GreenLight80,
         border = BorderStroke(2.dp, Forest40),
-        //modifier = Modifier.padding(20.dp)
         ){
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(20.dp)
         ){
-            Row(//border = BorderStroke(3.dp, Sage40),
-                //modifier = Modifier
-                    //.border(
-                            //width = 2.dp,
-                    //        color = Mint40,
-                            //shape = RoundedCornerShape(8.dp
-                     //       ), // Скругление углов
-                //        )
-                    //.padding(20.dp),
-                   // .border(1.dp,Forest90),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp))
             {
                 // Hours wheel (0-99)
                 WheelPicker(
@@ -98,9 +87,9 @@ fun WheelTimePicker(
                 Box(
                     modifier = Modifier
                         .padding(top = 15.dp)
-                        .height(180.dp)  // ✅ Match WheelPicker's containerHeight
-                        .width(15.dp),   // ✅ Fixed width for consistent spacing
-                    contentAlignment = Alignment.Center  // ✅ Center colon vertically + horizontally
+                        .height(180.dp)  //  Match WheelPicker's containerHeight
+                        .width(15.dp),   //  Fixed width for consistent spacing
+                    contentAlignment = Alignment.Center  //  Center colon vertically + horizontally
                 ) {
                     Text(
                         text = ":",
@@ -120,14 +109,14 @@ fun WheelTimePicker(
                 Box(
                     modifier = Modifier
                         .padding(top = 15.dp)
-                        .height(180.dp)  // ✅ Match WheelPicker's containerHeight
-                        .width(15.dp),   // ✅ Fixed width for consistent spacing
-                    contentAlignment = Alignment.Center  // ✅ Center colon vertically + horizontally
+                        .height(180.dp)  //  Match WheelPicker's containerHeight
+                        .width(15.dp),   //  Fixed width for consistent spacing
+                    contentAlignment = Alignment.Center  //  Center colon vertically + horizontally
                 ) {
                     Text(
                         text = ":",
                         style = MaterialTheme.typography.headlineMedium,
-                        color = GreenGrey90  // ✅ Optional: match your theme
+                        color = GreenGrey90  //  Optional: match your theme
                     )
                 }
 
@@ -172,7 +161,7 @@ private fun WheelPicker(
     )
 
     // 🔹 Calculate item height for precise guide positioning
-    val itemHeight = 60.dp  // 40dp text + 16dp padding (match your Text modifier)
+    val itemHeight = 60.dp
     val containerHeight = 180.dp
     val guideOffset = (containerHeight - itemHeight) / 2  // Center the selection window
 
@@ -190,9 +179,6 @@ private fun WheelPicker(
             val visibleItems: List<LazyListItemInfo> = layoutInfo.visibleItemsInfo
 
             if (visibleItems.isEmpty()) return@derivedStateOf initialValue
-
-            // Find the item whose center is closest to the center of the selection window
-            //val selectionCenterY = guideOffset + itemHeight / 2  // Center of highlighted slot
 
             visibleItems.minByOrNull { item: LazyListItemInfo ->
                 // Calculate distance from item center to selection center
@@ -216,7 +202,6 @@ private fun WheelPicker(
             modifier = Modifier
                 .height(containerHeight)
                 .width(60.dp)
-                //.border(1.dp, Mint40)
         ) {
             // 🔹 Scrollable list
             LazyColumn(
@@ -279,7 +264,6 @@ private fun WheelPicker(
                     .align(Alignment.TopCenter)
                     .offset(y = guideOffset)
                     .background(Yellow40.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
-                    //.pointerInput(Unit) { }  // Don't intercept touch events
             )
         }
     }
@@ -294,6 +278,7 @@ private fun WheelPicker(
 
     val selectionTop = with(LocalDensity.current) { guideOffset.toPx() }
     val selectionBottom = selectionTop + with(LocalDensity.current) { itemHeight.toPx() }
+
 // Add auto-snap when scrolling ends (FIXED for both directions)
     LaunchedEffect(listState.isScrollInProgress) {
         snapshotFlow { listState.isScrollInProgress }
@@ -309,15 +294,15 @@ private fun WheelPicker(
                     }
 
                     if (targetItem != null) {
-                        // ✅ Calculate current item center
+                        //  Calculate current item center
                         val itemCenterY = targetItem.offset + targetItem.size / 2f
 
-                        // ✅ Calculate offset needed to center the item
+                        //  Calculate offset needed to center the item
                         val scrollDelta = itemCenterY - selectionCenterY
 
-                        // ✅ Only snap if offset is noticeable (> 10px)
+                        //  Only snap if offset is noticeable (> 10px)
                         if (kotlin.math.abs(scrollDelta) > 10f) {
-                            // ✅ Scroll by exact delta to center (not scrollToItem!)
+                            // Scroll by exact delta to center (not scrollToItem!)
                             listState.scrollBy(scrollDelta)
                         }
                     }

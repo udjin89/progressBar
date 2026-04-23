@@ -38,10 +38,8 @@ fun TimerScreen(viewModel: TimerViewModel) {
         verticalArrangement = Arrangement.Center
     ) {
         TimerDial(
-            //viewModel = viewModel,
             totalDurationMillis = duration,
             elapsedMillis = state.elapsedMillis,
-           // modifier = Modifier.border(1.dp, Yellow40)
         )
         Spacer(Modifier.height(24.dp))
         Button(
@@ -53,9 +51,9 @@ fun TimerScreen(viewModel: TimerViewModel) {
         ) {
             Text(
                 text = when {
-                    state.isFinished -> "Reset"      // ✅ Highest priority
-                    state.isRunning -> "Pause"        // ✅ Second
-                    else -> "Start"                   // ✅ Default
+                    state.isFinished -> "Reset"       // Highest priority
+                    state.isRunning -> "Pause"        //  Second
+                    else -> "Start"                   //  Default
                 }
             )
         }

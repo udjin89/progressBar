@@ -53,8 +53,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         modifier = Modifier,
-                            //.fillMaxSize().border(5.dp, Yellow40),
-                           // .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom)),
                         contentWindowInsets = WindowInsets(0)
                     ) { innerPadding ->
                         HomeScreen(

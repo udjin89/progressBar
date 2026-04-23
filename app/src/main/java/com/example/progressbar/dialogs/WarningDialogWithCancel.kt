@@ -24,8 +24,8 @@ fun WarningDialogWithCancel(
 
         confirmButton = {
             TextButton(onClick = {
-                show.value = false // ✅ Auto-closes
-                onConfirm?.invoke() // 🟢 Optional extra action
+                show.value = false // Auto-closes
+                onConfirm?.invoke() // Optional extra action
             }) {
                 Text("OK")
             }

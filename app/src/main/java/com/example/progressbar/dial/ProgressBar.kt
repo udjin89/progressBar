@@ -52,9 +52,9 @@ fun ProgressBar(
 
     fun getMarkerColor(threshold: Long): Color {
         return if (duration > 0 && state.elapsedMillis >= threshold) {
-            Forest40  // ✅ Passed: green
+            Forest40  //  Passed: green
         } else {
-            Orange40  // ⏳ Not reached: orange
+            Orange40  //  Not reached: orange
         }
     }
 
@@ -98,16 +98,16 @@ fun ProgressBar(
         ) {
             val barHeight = size.height
             val barWidth = size.width
-            val progressWidth = barWidth * state.progress  // ✅ Width grows with progress
+            val progressWidth = barWidth * state.progress  //  Width grows with progress
 
-            // ✅ Draw rounded track background (optional, if you want rounded ends)
+            //  Draw rounded track background (optional, if you want rounded ends)
             drawRoundRect(
                 color = Pink20,  // Track color
                 size = Size(barWidth, barHeight),
                 cornerRadius = CornerRadius(8f, 8f)
             )
 
-            // ✅ Draw progress with DYNAMIC gradient (only over filled portion)
+            //  Draw progress with DYNAMIC gradient (only over filled portion)
             if (state.progress > 0f) {
                 drawRoundRect(
                     brush = Brush.horizontalGradient(
@@ -118,7 +118,7 @@ fun ProgressBar(
                             Forest90    //  End of filled portion
                         ),
                         startX = 0f,
-                        endX = barWidth  // ✅ Gradient scales with progress!
+                        endX = barWidth  //  Gradient scales with progress!
                     ),
                     size = Size(progressWidth, barHeight),
                     cornerRadius = CornerRadius(8f, 8f)

@@ -101,34 +101,6 @@ fun TimeCard(
             TimeCardContent(title, timeMillis, inRange, onClick)
         }
     }
-
-/*
-        Box(
-            modifier = modifier
-                .background(GreenLight80, RoundedCornerShape(12.dp))  // GreenLight80
-                .border(1.dp, GreenGrey80, RoundedCornerShape(12.dp)) // GreenGrey80
-                .padding(horizontal = 16.dp, vertical = 14.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = GreenGrey90
-                )
-                Text(
-                    text = formatDuration(timeMillis),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if(inRange) Forest40 else GreenGrey90.copy(alpha = 0.6f), // Forest40
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-*/
-
 }
 
 @Composable

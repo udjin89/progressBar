@@ -25,7 +25,6 @@ import com.example.progressbar.utils.formatDuration
 
 @Composable
 fun TimerDial(
-    //viewModel: TimerViewModel,
     totalDurationMillis: Long,
     elapsedMillis: Long,
     modifier: Modifier = Modifier,
@@ -33,16 +32,13 @@ fun TimerDial(
     progressColor: Color = MaterialTheme.colorScheme.primary,
     textStyle: TextStyle = MaterialTheme.typography.headlineMedium
 ) {
-    //Log.i("DBG", "elapsedMillis --> ${elapsedMillis}")
+
     // Clamp to prevent negative progress
     val safeRemaining = maxOf(totalDurationMillis - elapsedMillis, 0L)
     val progress = if (totalDurationMillis > 0) {
         safeRemaining.toFloat() / totalDurationMillis
     } else 0f
 
-    //Log.i("DBG", "--> ${safeRemaining}, total = $totalDurationMillis")
-
-    // ✅ FIX: Removed explicit `State<Float>` type. `by` auto-unwraps to `Float`.
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
         animationSpec = tween(durationMillis = 200, easing = LinearEasing),
@@ -50,9 +46,8 @@ fun TimerDial(
     )
 
     val sweepAngle = animatedProgress * 360f
-//    val timeText = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
     val timeText = formatDuration(safeRemaining)
-    //Log.i("DBG", "--> ${timeText}")
+
     Box(
         modifier = modifier
             .size(160.dp)
