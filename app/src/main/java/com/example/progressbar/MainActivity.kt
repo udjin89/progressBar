@@ -43,14 +43,18 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            ProgressBarTheme {
+            ProgressBarTheme(
+                darkTheme = false,
+                dynamicColor = false
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
                     Scaffold(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier,
+                            //.fillMaxSize().border(5.dp, Yellow40),
+                           // .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom)),
                         contentWindowInsets = WindowInsets(0)
                     ) { innerPadding ->
                         HomeScreen(
@@ -58,6 +62,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top))
                                 .padding(innerPadding)
+
                         )
                     }
                 }
